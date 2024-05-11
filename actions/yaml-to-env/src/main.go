@@ -44,11 +44,6 @@ func main() {
 	}
 	defer file.Close()
 
-	_, err = file.WriteString("TEST_VAR=\"test_value\"\n")
-	if err != nil {
-		panic(err)
-	}
-
 	// Write each environment variable to the file
 	for key, value := range mapEnvs {
 		_, err := file.WriteString(fmt.Sprintf("%s=%s\n", key, value))
@@ -64,18 +59,26 @@ func mapEnvironmentVariables(prefix string, envs interface{}) map[string]string 
 	case map[string]interface{}:
 		for key, value := range envs {
 			fullKey := constructFullKey(prefix, key)
-			mapEnvironmentVariables(fullKey, value)
+			for k, v := range mapEnvironmentVariables(fullKey, value) {
+				mapEnvs[k] = v
+			}
 		}
 	case []interface{}:
 		for i, item := range envs {
 			indexedKey := fmt.Sprintf("%s_%d", prefix, i)
-			mapEnvironmentVariables(indexedKey, item)
+			for k, v := range mapEnvironmentVariables(indexedKey, item) {
+				mapEnvs[k] = v
+			}
 		}
 	case map[interface{}]interface{}:
 		normalizedMap := convertMap(envs)
-		mapEnvironmentVariables(prefix, normalizedMap)
+		for k, v := range mapEnvironmentVariables(prefix, normalizedMap) {
+			mapEnvs[k] = v
+		}
 	default:
-		mapEnvs[prefix] = fmt.Sprintf("\"%v\"", envs)
+		if prefix != "" {
+			mapEnvs[prefix] = fmt.Sprintf("\"%v\"", envs)
+		}
 	}
 
 	return mapEnvs
