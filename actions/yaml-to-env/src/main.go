@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -48,6 +49,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("%s=%s\n", key, value)
 	}
 }
 
@@ -61,7 +63,7 @@ func mapEnvironmentVariables(prefix string, envs interface{}) map[string]string 
 		}
 	case []interface{}:
 		for i, item := range envs {
-			indexedKey := fmt.Sprintf("%s.%d", prefix, i)
+			indexedKey := fmt.Sprintf("%s_%d", prefix, i)
 			mapEnvironmentVariables(indexedKey, item)
 		}
 	case map[interface{}]interface{}:
@@ -76,9 +78,9 @@ func mapEnvironmentVariables(prefix string, envs interface{}) map[string]string 
 
 func constructFullKey(prefix, key string) string {
 	if prefix == "" {
-		return key
+		return strings.ToUpper(key)
 	}
-	return prefix + "." + key
+	return strings.ToUpper(fmt.Sprintf("%s_%s", prefix, key))
 }
 
 func convertMap(orig map[interface{}]interface{}) map[string]interface{} {
