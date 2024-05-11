@@ -1,0 +1,11 @@
+name: 'YAML to Env'
+description: 'Read YAML files and set environment variables'
+inputs:
+  yaml-file:
+    description: 'Path to the YAML file'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    INPUT_YAML_FILE: ${{ inputs.yaml-file }}
