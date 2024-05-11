@@ -11,6 +11,6 @@ FROM alpine:3.19 AS publisher
 
 WORKDIR /github/workspace
 
-COPY --from=builder /app/bin/read-yaml ./read-yaml
+COPY --from=builder /app/bin/read-yaml /github/workspace/read-yaml
 
 ENTRYPOINT ["/github/workspace/read-yaml"]
