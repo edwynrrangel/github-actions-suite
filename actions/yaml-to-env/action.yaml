@@ -8,4 +8,4 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    INPUT_YAML_FILE: ${{ inputs.yaml-file }}
+    INPUT_YAML_FILE: /github/workspace/${{ inputs.yaml-file }}
