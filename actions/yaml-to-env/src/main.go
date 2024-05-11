@@ -77,7 +77,7 @@ func mapEnvironmentVariables(prefix string, envs interface{}) map[string]string 
 		}
 	default:
 		if prefix != "" {
-			mapEnvs[prefix] = fmt.Sprintf("\"%v\"", envs)
+			mapEnvs[prefix] = fmt.Sprintf("%v", envs)
 		}
 	}
 
