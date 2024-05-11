@@ -31,7 +31,6 @@ func main() {
 	}
 
 	mapEnvs := mapEnvironmentVariables("", envs)
-	fmt.Printf("Environment variables: %+v\n", mapEnvs)
 
 	envFile := os.Getenv("GITHUB_ENV")
 	if envFile == "" {
@@ -44,8 +43,9 @@ func main() {
 	}
 	defer file.Close()
 
-	// Write each environment variable to the file
+	fmt.Printf("Environment variables:\n")
 	for key, value := range mapEnvs {
+		fmt.Printf("%s=%s\n", key, value)
 		_, err := file.WriteString(fmt.Sprintf("%s=%s\n", key, value))
 		if err != nil {
 			panic(err)
