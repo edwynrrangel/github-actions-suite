@@ -15,12 +15,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer yamlFile.Close()
 
 	data, err := io.ReadAll(yamlFile)
 	if err != nil {
 		panic(err)
 	}
+	yamlFile.Close()
 
 	re := regexp.MustCompile(`#{(.*?)}#`)
 	replacedContent := re.ReplaceAllStringFunc(string(data), func(token string) string {
@@ -30,7 +30,7 @@ func main() {
 		return envValue
 	})
 
-	fmt.Printf("Modified content:\n##########%s##########\n", replacedContent)
+	fmt.Printf("Modified content:\n##########\n%s##########\n", replacedContent)
 
 	if os.Getenv("OUTPUT_YAML_FILE") == "" {
 		err = os.WriteFile(os.Getenv("INPUT_YAML_FILE"), []byte(replacedContent), 0644)
