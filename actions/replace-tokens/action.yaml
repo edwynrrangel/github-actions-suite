@@ -1,0 +1,11 @@
+name: 'Replace Tokens'
+description: 'Read environment variables and replace tokens in a YAML file'
+inputs:
+  yaml-file:
+    description: 'Path to the YAML file'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    INPUT_YAML_FILE: /github/workspace/${{ inputs.yaml-file }}
