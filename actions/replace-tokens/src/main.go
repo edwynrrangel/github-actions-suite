@@ -22,23 +22,27 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("data: %s\n", data)
-
-	// Convierte los datos a string para procesamiento
-	content := string(data)
-
-	// Expresión regular para encontrar todos los tokens
 	re := regexp.MustCompile(`#{(.*?)}#`)
-
-	// Reemplaza cada token encontrado por su valor de variable de entorno correspondiente
-	replacedContent := re.ReplaceAllStringFunc(content, func(token string) string {
+	replacedContent := re.ReplaceAllStringFunc(string(data), func(token string) string {
 		// Extrae el nombre de la variable de entorno del token
 		varName := token[2 : len(token)-2] // Elimina los delimitadores #{ y }#
-		// Obtiene el valor de la variable de entorno
 		envValue := os.Getenv(varName)
 		return envValue
 	})
 
-	// Imprime el contenido final para verificar
-	fmt.Printf("Modified content: %s\n", replacedContent)
+	fmt.Printf("Modified content:\n##########%s##########\n", replacedContent)
+
+	if os.Getenv("OUTPUT_YAML_FILE") == "" {
+		err = os.WriteFile(os.Getenv("INPUT_YAML_FILE"), []byte(replacedContent), 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if os.Getenv("OUTPUT_YAML_FILE") != "" {
+		err = os.WriteFile(os.Getenv("OUTPUT_YAML_FILE"), []byte(replacedContent), 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
