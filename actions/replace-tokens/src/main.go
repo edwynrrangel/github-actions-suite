@@ -30,19 +30,6 @@ func main() {
 		return envValue
 	})
 
-	fmt.Printf("Modified content:\n##########\n%s##########\n", replacedContent)
+	fmt.Printf("Modified content:\n%s##########\n", replacedContent)
 
-	if os.Getenv("OUTPUT_YAML_FILE") == "" {
-		err = os.WriteFile(os.Getenv("INPUT_YAML_FILE"), []byte(replacedContent), 0644)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	if os.Getenv("OUTPUT_YAML_FILE") != "" {
-		err = os.WriteFile(os.Getenv("OUTPUT_YAML_FILE"), []byte(replacedContent), 0644)
-		if err != nil {
-			panic(err)
-		}
-	}
 }
