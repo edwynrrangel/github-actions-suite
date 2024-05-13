@@ -7,11 +7,10 @@ import (
 )
 
 func main() {
-	// if os.Getenv("INPUT_YAML_FILE") == "" {
-	// 	panic("no yaml file provided")
-	// }
-	// yamlFile, err := os.Open(os.Getenv("INPUT_YAML_FILE"))
-	yamlFile, err := os.Open("values.yaml")
+	if os.Getenv("INPUT_YAML_FILE") == "" {
+		panic("no yaml file provided")
+	}
+	yamlFile, err := os.Open(os.Getenv("INPUT_YAML_FILE"))
 	if err != nil {
 		panic(err)
 	}
