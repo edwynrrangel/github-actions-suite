@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"unicode"
 
 	"gopkg.in/yaml.v3"
 )
@@ -86,9 +87,9 @@ func mapEnvironmentVariables(prefix string, envs interface{}) map[string]string 
 
 func constructFullKey(prefix, key string) string {
 	if prefix == "" {
-		return strings.ToUpper(key)
+		return camelToSnake(key)
 	}
-	return strings.ToUpper(fmt.Sprintf("%s_%s", prefix, key))
+	return fmt.Sprintf("%s_%s", prefix, camelToSnake(key))
 }
 
 func convertMap(orig map[interface{}]interface{}) map[string]interface{} {
@@ -99,4 +100,15 @@ func convertMap(orig map[interface{}]interface{}) map[string]interface{} {
 		}
 	}
 	return normalized
+}
+
+func camelToSnake(s string) string {
+	var result strings.Builder
+	for i, r := range s {
+		if unicode.IsUpper(r) && i > 0 {
+			result.WriteByte('_')
+		}
+		result.WriteRune(unicode.ToUpper(r))
+	}
+	return result.String()
 }
