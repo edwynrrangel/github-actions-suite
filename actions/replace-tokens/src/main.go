@@ -8,11 +8,12 @@ import (
 )
 
 func main() {
-	if os.Getenv("INPUT_YAML_FILE") == "" {
+	pathInputFile := os.Getenv("INPUT_YAML_FILE")
+	if pathInputFile == "" {
 		panic("no yaml file provided")
 	}
-	fmt.Printf("YAML file: %s\n", os.Getenv("INPUT_YAML_FILE"))
-	yamlFile, err := os.Open(os.Getenv("INPUT_YAML_FILE"))
+	fmt.Printf("YAML file: %s\n", pathInputFile)
+	yamlFile, err := os.Open(pathInputFile)
 	if err != nil {
 		panic(err)
 	}
@@ -31,10 +32,8 @@ func main() {
 		return envValue
 	})
 
-	fmt.Printf("Modified content:\n%s##########\n", replacedContent)
-
 	if os.Getenv("OUTPUT_YAML_FILE") == "" {
-		err = os.WriteFile(os.Getenv("INPUT_YAML_FILE"), []byte(replacedContent), 0644)
+		err = os.WriteFile(pathInputFile, []byte(replacedContent), 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -46,4 +45,6 @@ func main() {
 			panic(err)
 		}
 	}
+
+	fmt.Printf("Replace tokens successfully\n%s##########\n", replacedContent)
 }
