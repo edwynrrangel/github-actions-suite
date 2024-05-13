@@ -8,41 +8,44 @@ import (
 )
 
 func main() {
-	inputFilePath := os.Getenv("INPUT_YAML_FILE")
-	if inputFilePath == "" {
+	pathInputFile := os.Getenv("INPUT_YAML_FILE")
+	if pathInputFile == "" {
 		panic("no yaml file provided")
 	}
-	fmt.Printf("YAML file: %s\n", inputFilePath)
-	// Añadir debugging para confirmar la ruta del archivo
-	fmt.Println("Intentando abrir el archivo:", inputFilePath)
-	yamlFile, err := os.Open(inputFilePath)
+	fmt.Printf("YAML file: %s\n", pathInputFile)
+
+	yamlFile, err := os.Open(pathInputFile)
 	if err != nil {
 		panic(err)
 	}
+	defer yamlFile.Close()
 
 	data, err := io.ReadAll(yamlFile)
 	if err != nil {
 		panic(err)
 	}
-	yamlFile.Close()
 
 	re := regexp.MustCompile(`#{(.*?)}#`)
 	replacedContent := re.ReplaceAllStringFunc(string(data), func(token string) string {
 		// Extrae el nombre de la variable de entorno del token
 		varName := token[2 : len(token)-2] // Elimina los delimitadores #{ y }#
 		envValue := os.Getenv(varName)
+		if envValue == "" {
+			return token
+		}
 		return envValue
 	})
 
-	outputFilePath := os.Getenv("OUTPUT_YAML_FILE")
-	if outputFilePath == "" {
-		outputFilePath = inputFilePath
+	pathOutputFile := pathInputFile
+	if os.Getenv("OUTPUT_YAML_FILE") != "" {
+		pathOutputFile = os.Getenv("OUTPUT_YAML_FILE")
 	}
+	fmt.Printf("Output YAML file: %s\n", pathOutputFile)
 
-	err = os.WriteFile(outputFilePath, []byte(replacedContent), 0644)
+	err = os.WriteFile(pathOutputFile, []byte(replacedContent), 0644)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Replace tokens successfully\n%s##########\n", replacedContent)
+	fmt.Printf("Replaced tokens successfully\n##########\n%s\n##########\n", replacedContent)
 }
