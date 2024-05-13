@@ -8,12 +8,14 @@ import (
 )
 
 func main() {
-	pathInputFile := os.Getenv("INPUT_YAML_FILE")
-	if pathInputFile == "" {
+	inputFilePath := os.Getenv("INPUT_YAML_FILE")
+	if inputFilePath == "" {
 		panic("no yaml file provided")
 	}
-	fmt.Printf("YAML file: %s\n", pathInputFile)
-	yamlFile, err := os.Open(pathInputFile)
+	fmt.Printf("YAML file: %s\n", inputFilePath)
+	// Añadir debugging para confirmar la ruta del archivo
+	fmt.Println("Intentando abrir el archivo:", inputFilePath)
+	yamlFile, err := os.Open(inputFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -32,18 +34,14 @@ func main() {
 		return envValue
 	})
 
-	if os.Getenv("OUTPUT_YAML_FILE") == "" {
-		err = os.WriteFile(pathInputFile, []byte(replacedContent), 0644)
-		if err != nil {
-			panic(err)
-		}
+	outputFilePath := os.Getenv("OUTPUT_YAML_FILE")
+	if outputFilePath == "" {
+		outputFilePath = inputFilePath
 	}
 
-	if os.Getenv("OUTPUT_YAML_FILE") != "" {
-		err = os.WriteFile(os.Getenv("OUTPUT_YAML_FILE"), []byte(replacedContent), 0644)
-		if err != nil {
-			panic(err)
-		}
+	err = os.WriteFile(outputFilePath, []byte(replacedContent), 0644)
+	if err != nil {
+		panic(err)
 	}
 
 	fmt.Printf("Replace tokens successfully\n%s##########\n", replacedContent)
