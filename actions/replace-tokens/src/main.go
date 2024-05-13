@@ -11,6 +11,7 @@ func main() {
 	if os.Getenv("INPUT_YAML_FILE") == "" {
 		panic("no yaml file provided")
 	}
+	fmt.Printf("YAML file: %s\n", os.Getenv("INPUT_YAML_FILE"))
 	yamlFile, err := os.Open(os.Getenv("INPUT_YAML_FILE"))
 	if err != nil {
 		panic(err)
@@ -32,4 +33,17 @@ func main() {
 
 	fmt.Printf("Modified content:\n%s##########\n", replacedContent)
 
+	if os.Getenv("OUTPUT_YAML_FILE") == "" {
+		err = os.WriteFile(os.Getenv("INPUT_YAML_FILE"), []byte(replacedContent), 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if os.Getenv("OUTPUT_YAML_FILE") != "" {
+		err = os.WriteFile(os.Getenv("OUTPUT_YAML_FILE"), []byte(replacedContent), 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
