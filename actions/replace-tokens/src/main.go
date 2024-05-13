@@ -8,10 +8,11 @@ import (
 )
 
 func main() {
-	pathInputFile := os.Getenv("INPUT_YAML_FILE")
-	if pathInputFile == "" {
+	if os.Getenv("INPUT_YAML_FILE") == "" {
 		panic("no yaml file provided")
 	}
+	basePath := "/github/workspace/"
+	pathInputFile := fmt.Sprintf("%s%s", basePath, os.Getenv("INPUT_YAML_FILE"))
 	fmt.Printf("YAML file: %s\n", pathInputFile)
 
 	yamlFile, err := os.Open(pathInputFile)
@@ -38,9 +39,8 @@ func main() {
 
 	pathOutputFile := pathInputFile
 	if os.Getenv("OUTPUT_YAML_FILE") != "" {
-		pathOutputFile = os.Getenv("OUTPUT_YAML_FILE")
+		pathOutputFile = fmt.Sprintf("%s%s", basePath, os.Getenv("OUTPUT_YAML_FILE"))
 	}
-	fmt.Printf("Output YAML file: %s\n", pathOutputFile)
 
 	err = os.WriteFile(pathOutputFile, []byte(replacedContent), 0644)
 	if err != nil {

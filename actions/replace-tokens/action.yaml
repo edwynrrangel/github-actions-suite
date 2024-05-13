@@ -10,5 +10,5 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    INPUT_YAML_FILE: /github/workspace/${{ inputs.input-yaml-file }}
-    OUTPUT_YAML_FILE: /github/workspace/${{ inputs.output-yaml-file }}
+    INPUT_YAML_FILE: ${{ inputs.input-yaml-file }}
+    OUTPUT_YAML_FILE: ${{ inputs.output-yaml-file }}
