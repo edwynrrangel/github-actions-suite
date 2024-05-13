@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 )
 
 func main() {
@@ -23,25 +24,21 @@ func main() {
 
 	fmt.Printf("data: %s\n", data)
 
-	// Obtener la ruta del archivo de entorno
-	envFile := os.Getenv("GITHUB_ENV")
-	if envFile == "" {
-		panic("GITHUB_ENV not set")
-	}
+	// Convierte los datos a string para procesamiento
+	content := string(data)
 
-	// Abrir el archivo en modo de solo lectura
-	envfile, err := os.OpenFile(envFile, os.O_RDONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer envfile.Close()
+	// Expresión regular para encontrar todos los tokens
+	re := regexp.MustCompile(`#{(.*?)}#`)
 
-	// Leer todo el contenido del archivo
-	envs, err := io.ReadAll(envfile)
-	if err != nil {
-		panic(err)
-	}
+	// Reemplaza cada token encontrado por su valor de variable de entorno correspondiente
+	replacedContent := re.ReplaceAllStringFunc(content, func(token string) string {
+		// Extrae el nombre de la variable de entorno del token
+		varName := token[2 : len(token)-2] // Elimina los delimitadores #{ y }#
+		// Obtiene el valor de la variable de entorno
+		envValue := os.Getenv(varName)
+		return envValue
+	})
 
-	// Imprimir el contenido para verificación
-	fmt.Printf("Environment file content: %s\n", envs)
+	// Imprime el contenido final para verificar
+	fmt.Printf("Modified content: %s\n", replacedContent)
 }
